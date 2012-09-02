@@ -213,7 +213,7 @@ void GetResource() {
 			// Save the handle
 			addResourceHandle(type, num, handle);
 
-			std::printf("INFO: %c%c%c%c segment 0x%X is at 0x%08X with size 0x%X\n", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, (type >> 0) & 0xFF, num, resAddress, res->length);
+			std::printf("INFO: %c%c%c%c segment 0x%X (\"%s\") is at 0x%08X with size 0x%X\n", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, (type >> 0) & 0xFF, num, resourceFork.getFilename(type, num), resAddress, res->length);
 		} else {
 			std::fprintf(stderr, "WARNING: GetResource: Resource %c%c%c%c%04X not found\n", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, (type >> 0) & 0xFF, num);
 		}
