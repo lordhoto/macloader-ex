@@ -192,7 +192,7 @@ void GetResource() {
 
 	uint32_t handle = findResourceHandle(type, num);
 	// Try to reuse handles
-	if (!handle) {
+	if (!handle && Memory::fetchUint16(0x0A5E) != 0) {
 		boost::scoped_ptr<DataPair> res(resourceFork.getResource(type, num));
 		if (res) {
 			// Allocate space for the handle
@@ -303,7 +303,7 @@ void GetResourceSizeOnDisk() {
 	Emulation::popUint32();
 
 	// Store the size
-	Emulation::pushUint32(Memory::fetchUint32(handle + 4));
+	Emulation::pushUint32(handle != 0 ? Memory::fetchUint32(handle + 4) : 0);
 
 	// Restore the return address
 	Emulation::pushUint32(retAddr);
