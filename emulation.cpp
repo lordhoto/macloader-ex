@@ -1053,13 +1053,28 @@ bool executeAndMulAbcdExg(const uint32_t instruction) {
 		FLAG_CLEAR_OVERFLOW;
 		FLAG_APPLY_ZERO(result);
 		FLAG_APPLY_NEG(result, 4);
-		return true;
 	// ABCD
 	} else if ((instruction & 0x1F0) == 0x100) {
 		return false;
 	// EXG
 	} else if ((instruction & 0x1C0) == 0x140 || (instruction & 0x1C0) == 0x180) {
-		return false;
+		// Get register numbers
+		const uint8_t reg1 = (instruction >> 9) & 0x7;
+		const uint8_t reg2 = (instruction >> 0) & 0x7;
+
+		// Get the operation mode
+		const uint8_t opmode = (instruction >> 3) & 0x1F;
+
+		if (opmode == 0x08) {
+			std::swap(registers.d[reg1], registers.d[reg2]);
+		} else if (opmode == 0x09) {
+			std::swap(registers.d[reg1], registers.a[reg2]);
+		} else if (opmode == 0x11) {
+			std::swap(registers.a[reg1], registers.a[reg2]);
+		} else {
+			printf("ERROR: Caught invalid opmode %2X for EXG\n", opmode);
+			return false;
+		}
 	// AND
 	} else {
 		const uint8_t size = 1 << ((instruction >> 6) & 0x3);
@@ -1093,8 +1108,9 @@ bool executeAndMulAbcdExg(const uint32_t instruction) {
 
 		// Write destination
 		writeParam(dstParam, result, dstMode, dstReg, size);
-		return true;
 	}
+
+	return true;
 }
 
 bool executeBitManMovepImm(const uint32_t instruction) {
