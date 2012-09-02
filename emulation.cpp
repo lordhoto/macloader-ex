@@ -1232,7 +1232,7 @@ bool executeBitManMovepImm(const uint32_t instruction) {
 
 		uint32_t result;
 		// Do operation
-		if (instruction & 0x0400) {
+		if (!(instruction & 0x0200)) {
 			result = subtract(dstValue, operand, size, false, true, !writeBack);
 		} else {
 			result = add(dstValue, operand, size, false, true, false);
