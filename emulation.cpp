@@ -1299,10 +1299,6 @@ void executeAdd(const uint16_t instruction) {
 	const uint32_t dstParam = getParameter(dstMode, dstReg, size);
 	const uint32_t dst = readParam(dstParam, dstMode, dstReg, size, false);
 
-	if (instruction == 0xD5B5) {
-		//printf("%08X %08X %08X\n", src, dst, dstParam);
-	}
-
 	// We use a 4 byte operand for sign extended sources, because sign
 	// extension is used for adda, which exclusivly produces 4 byte results.
 	const uint32_t result = add(dst, src, signExtendSource ? 4 : size, useXBit, processFlags, false);
