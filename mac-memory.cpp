@@ -47,8 +47,8 @@ SpecialAddresses systemMemory[] = {
 	{ 0x0A60,  2, { 0x00, 0x00 } },
 	// Whether the debugger should be used
 	{ 0x012D,  1, { 0x00 } },
-	// ResLead, whether to auto-load resource files
-	{ 0x0A5E,  2, { 0x00, 0x00 } },
+	// ResLoad, whether to auto-load resource files
+	{ 0x0A5E,  2, { 0xFF, 0x00 } },
 };
 
 #define IN_SYSTEM_MEMORY_BLOCK(address, i) (address >= systemMemory[i].addr && address < systemMemory[i].addr + systemMemory[i].size)
