@@ -774,6 +774,32 @@ bool executeMisc(const uint16_t instruction) {
 		FLAG_CLEAR_OVERFLOW;
 		FLAG_APPLY_ZERO(value);
 		FLAG_APPLY_NEG(value, size);
+	// LINK with WORD operand
+	} else if ((instruction & 0xFFF8) == 0x4E50) {
+		// Get the register to use
+		const uint8_t reg = instruction & 0x7;
+
+		// Save the specified register
+		PUSH_VALUE(registers.a[reg], 4);
+
+		// Load the stack pointer into the specified register
+		registers.a[reg] = registers.a[7];
+
+		// Read the displacement (16 bit signed word)
+		const int32_t displacement = getParameter(7, 0, 2);
+
+		// Update the stack pointer
+		registers.a[7] += displacement;
+	// UNLK
+	} else if ((instruction & 0xFFF8) == 0x4E58) {
+		// Get the register to use
+		const uint8_t reg = instruction & 0x7;
+
+		// Load the stack pointer
+		registers.a[7] = registers.a[reg];
+
+		// Load the old register value from the stack
+		registers.a[reg] = POP_VALUE(4, false);
 	} else {
 		return false;
 	}
