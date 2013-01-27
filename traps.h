@@ -38,6 +38,11 @@ void SetToolTrapAddress();
 void GetResourceSizeOnDisk();
 void HLock();
 void StripAddress();
+void GetResAttrs();
+void ReserveMem();
+void LoadResource();
+void DetachResource();
+void HSetState();
 } // End of namespace Traps
 
 #endif

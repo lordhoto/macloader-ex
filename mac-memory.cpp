@@ -219,11 +219,15 @@ TrapAddressMap trapAddresses[] = {
 	{ 0xA047, TRAP_ADDRESS(0x00000020)          , &Traps::SetTrapAddress        },
 	{ 0xA069, TRAP_ADDRESS(0x00000024)          , &Traps::HGetState             },
 	{ 0xA31E, TRAP_ADDRESS(0x00000028)          , &Traps::NewPtrClear           },
-	// This is actually SetToolTrapAddress:
 	{ 0xA647, TRAP_ADDRESS(0x0000002C)          , &Traps::SetToolTrapAddress    },
 	{ 0xA9A5, TRAP_ADDRESS(0x00000030)          , &Traps::GetResourceSizeOnDisk },
 	{ 0xA029, TRAP_ADDRESS(0x00000034)          , &Traps::HLock                 },
 	{ 0xA055, TRAP_ADDRESS(0x00000038)          , &Traps::StripAddress          },
+	{ 0xA9A6, TRAP_ADDRESS(0x0000003C)          , &Traps::GetResAttrs           },
+	{ 0xA040, TRAP_ADDRESS(0x00000040)          , &Traps::ReserveMem            },
+	{ 0xA9A2, TRAP_ADDRESS(0x00000044)          , &Traps::LoadResource          },
+	{ 0xA992, TRAP_ADDRESS(0x00000048)          , &Traps::DetachResource        },
+	{ 0xA06A, TRAP_ADDRESS(0x0000004C)          , &Traps::HSetState             },
 	{ 0xA89F, TRAP_ADDRESS(TRAP_ADDRESS_INVALID), nullptr                       }
 };
 #undef TRAP_ADDRESS

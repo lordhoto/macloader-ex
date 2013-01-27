@@ -86,31 +86,44 @@ void initializeResourceHandles() {
 void LoadSeg() {
 	// Get the segment number
 	const uint16_t segmentNumber = Memory::fetchUint16(Emulation::registers.a[7] + 4);
-	boost::scoped_ptr<DataPair> code(resourceFork.getResource(kCodeTag, segmentNumber));
 
-	const uint16_t jumpTableOffset  = readUint16BE(code->data + 0);
-	const uint16_t jumpTableEntries = readUint16BE(code->data + 2);
+	uint16_t jumpTableOffset, jumpTableEntries;
+	uint32_t address;
 
-	// Allocate space for the segment
-	const uint32_t address = Memory::allocateSegment(code->length);
+	uint32_t handle = findResourceHandle(kCodeTag, segmentNumber);
 
-	// Load the segment into memory
-	Memory::copyIntoMemory(address, code->data, code->length);
+	// Only load the segment, if that has not been done already.
+	if (handle) {
+		address          = Memory::fetchUint32(handle);
+		jumpTableOffset  = Memory::fetchUint16(address + 0);
+		jumpTableEntries = Memory::fetchUint16(address + 2);
+	} else {
+		boost::scoped_ptr<DataPair> code(resourceFork.getResource(kCodeTag, segmentNumber));
 
-	// Allocate space for the handle
-	const uint32_t handle = Memory::allocateHandlePointer();
+		jumpTableOffset  = readUint16BE(code->data + 0);
+		jumpTableEntries = readUint16BE(code->data + 2);
 
-	// Save the resource address in the handle
-	Memory::writeUint32(handle + 0, address);
+		// Allocate space for the segment
+		address = Memory::allocateSegment(code->length);
 
-	// Save the handle size
-	Memory::writeUint32(handle + 4, code->length);
+		// Load the segment into memory
+		Memory::copyIntoMemory(address, code->data, code->length);
 
-	// Save the handle
-	addResourceHandle(kCodeTag, segmentNumber, handle);
+		// Allocate space for the handle
+		handle = Memory::allocateHandlePointer();
 
-	// Output location
-	std::printf("INFO: (Builtin loader) CODE segment 0x%X is at 0x%08X with size 0x%X\n", segmentNumber, address, code->length);
+		// Save the resource address in the handle
+		Memory::writeUint32(handle + 0, address);
+
+		// Save the handle size
+		Memory::writeUint32(handle + 4, code->length);
+
+		// Save the handle
+		addResourceHandle(kCodeTag, segmentNumber, handle);
+
+		// Output location
+		std::printf("INFO: (Builtin loader) CODE segment 0x%X is at 0x%08X with size 0x%X\n", segmentNumber, address, code->length);
+	}
 
 	// Patch up the jump table
 	for (uint16_t i = 0; i < jumpTableEntries; ++i) {
@@ -192,7 +205,7 @@ void GetResource() {
 
 	uint32_t handle = findResourceHandle(type, num);
 	// Try to reuse handles
-	if (!handle && Memory::fetchUint16(0x0A5E) != 0) {
+	if (!handle/* && Memory::fetchUint16(0x0A5E) != 0*/) {
 		boost::scoped_ptr<DataPair> res(resourceFork.getResource(type, num));
 		if (res) {
 			// Allocate space for the handle
@@ -314,6 +327,59 @@ void HLock() {
 }
 
 void StripAddress() {
+	// Dummy
+}
+
+void GetResAttrs() {
+	// Save the return address.
+	const uint32_t retAddr = Emulation::popUint32();
+
+	// Get the handle
+	/*const uint32_t handle = */Emulation::popUint32();
+
+	// Pop the dummy result
+	Emulation::popUint16();
+
+	// FIXME: We set all flags to false for now.
+	Emulation::pushUint16(0);
+
+	// Restore the return address
+	Emulation::pushUint32(retAddr);
+}
+
+void ReserveMem() {
+	// Dummy
+}
+
+void LoadResource() {
+	// Save the return address.
+	const uint32_t retAddr = Emulation::popUint32();
+
+	// Get the handle
+	/*const uint32_t handle = */Emulation::popUint32();
+
+	// Right now we always load the resources into memory, thus
+	// there is no need to handle this.
+
+	// Restore the return address
+	Emulation::pushUint32(retAddr);
+}
+
+void DetachResource() {
+	// Save the return address.
+	const uint32_t retAddr = Emulation::popUint32();
+
+	// Get the handle
+	/*const uint32_t handle = */Emulation::popUint32();
+
+	// FIXME: This should remove the handle from the loaded
+	// resource list.
+
+	// Restore the return address
+	Emulation::pushUint32(retAddr);
+}
+
+void HSetState() {
 	// Dummy
 }
 } // End of namespace Traps
