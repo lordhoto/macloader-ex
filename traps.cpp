@@ -84,8 +84,10 @@ void initializeResourceHandles() {
 }
 
 void LoadSeg() {
+	// Read the return address
+	const uint32_t retAddress = Emulation::popUint32();
 	// Get the segment number
-	const uint16_t segmentNumber = Memory::fetchUint16(Emulation::registers.a[7] + 4);
+	const uint16_t segmentNumber = Emulation::popUint16();
 
 	uint16_t jumpTableOffset, jumpTableEntries;
 	uint32_t address;
@@ -140,6 +142,9 @@ void LoadSeg() {
 		// Write the offset
 		Memory::writeUint32(tableEntry + 4, functionAddress);
 	}
+
+	// Save the return address
+	Emulation::pushUint32(retAddress);
 }
 
 void GetOSTrapAddress() {
